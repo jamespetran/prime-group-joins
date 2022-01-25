@@ -61,7 +61,8 @@ JOIN products ON products.id = warehouse_product.product_id
 WHERE products.description = 'diet pepsi'
 GROUP BY products.description;
 
--- 9. How much has each customer spent in total? Customers who have spent $0 should still show up in the table. It should say 0, not NULL (research coalesce).
+
+-- 9. How much was the total cost for each order?
 SELECT 
   concat ( customers.first_name, ' ', customers.last_name ) AS name,
   coalesce(sum(products.unit_price*line_items.quantity), 0)
@@ -71,9 +72,17 @@ JOIN orders ON orders.address_id = addresses.id
 JOIN line_items ON line_items.order_id = orders.id
 JOIN products ON products.id = line_items.product_id
 GROUP BY name;
--- #9 is missing the person who didn't order anything... so its not done
 
--- 10. How much was the total cost for each order?
+-- 10. How much has each customer spent in total?
+
+-- 11. How much has each customer spent in total? Customers who have spent $0 should still show up in the table. It should say 0, not NULL (research coalesce).
 SELECT 
-
--- 11. How much has each customer spent in total?
+  concat ( customers.first_name, ' ', customers.last_name ) AS name,
+  coalesce(sum(products.unit_price*line_items.quantity), 0)
+FROM customers
+FULL JOIN addresses ON customers.id = addresses.customer_id
+FULL JOIN orders ON orders.address_id = addresses.id
+FULL JOIN line_items ON line_items.order_id = orders.id
+FULL JOIN products ON products.id = line_items.product_id
+GROUP BY name;
+-- FULL JOIN makes it grab all the data...period
